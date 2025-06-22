@@ -7,130 +7,78 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Recent Changes (2025-06-22)
+- 🔧 **Build System Fixes** - Resolved all TypeScript and ESLint compilation errors
+- ⚙️ **Next.js Configuration** - Updated to use `serverExternalPackages` instead of deprecated experimental option
+- 🚀 **GitHub Actions** - Fixed workflow configuration to trigger on correct branch (master)
+- 🧹 **Release Cleanup** - Removed all previous releases (v0.1.1, v0.1.2) for clean project state
+- 📝 **Code Quality** - Fixed React Hook dependencies and removed unused variables
+
 ### Planned
 - Audio conversion (MP3, WAV, OGG, FLAC, AAC, M4A)
-- Video conversion (MP4, WebM, OGG, AVI, MOV)
+- Video conversion (MP4, WebM, OGV, AVI, MOV)
 - Archive handling (ZIP, TAR, GZ)
 - Batch conversion presets
 - Advanced accessibility features
 - Unit and integration tests
 
-## [0.1.2] - 2025-01-22
+## Development History
 
-### Added
-- 🚀 **Multi-Format Support** - Expanded beyond images to support multiple file categories
-- 📄 **Document Conversion** - Added support for TXT, CSV, JSON, HTML, CSS, JS, XML formats
-- 🔄 **Smart Format Detection** - Automatic file category detection and format suggestions
-- 🎨 **Enhanced UI** - Category-specific icons and improved file type display
-- 🔧 **CSV ↔ JSON Conversion** - Bidirectional conversion between CSV and JSON formats
-- 📝 **Text to HTML** - Convert plain text files to formatted HTML documents
+### Previous Development (Removed Releases)
+The following releases were removed during project cleanup on 2025-06-22:
 
-### Improved
-- **File Processing** - Modular conversion system supporting multiple file types
-- **User Experience** - Clear format categorization and conversion status
-- **Error Handling** - Better error messages for unsupported conversions
-- **Documentation** - Updated README with comprehensive format support details
+#### [0.1.2] - Previously Released (Removed)
+- Multi-format support expansion beyond images
+- Document conversion (TXT, CSV, JSON, HTML, CSS, JS, XML)
+- Smart format detection and category-specific UI
+- CSV ↔ JSON bidirectional conversion
+- Text to HTML conversion
 
-### Technical
-- Refactored FileConverter component with category-based processing
-- Added specialized conversion functions for different file types
-- Implemented dynamic format selection based on file category
-- Enhanced file type detection and validation
-
-## [0.1.1] - 2025-01-22
-
-### Fixed
-- 🔧 **GitHub Actions Workflows** - Fixed CI/CD pipelines to use pnpm instead of npm
-- 🚀 **Release Automation** - Corrected package manager configuration for automated releases
-- 📦 **Build Process** - Ensured reproducible builds with proper lockfile handling
-
-### Technical Improvements
-- Updated deploy.yml workflow with pnpm setup and caching
-- Fixed release.yml workflow for proper dependency management
-- Added pnpm/action-setup for consistent pnpm installation
-- Improved audit commands for pnpm compatibility
-- Enhanced workflow reliability and build performance
-
-## [0.1.0] - 2025-01-22
-
-### Added
-- 🎉 **Initial Release** - Complete open source file conversion tool
-- 🔒 **Privacy-First Design** - All processing happens client-side
-- ⚡ **Image Conversion** - Support for JPG, PNG, WebP, GIF formats
-- 📱 **PWA Support** - Installable web app with offline functionality
-- 🎨 **Modern UI** - Clean interface with drag & drop file upload
-- 🌙 **Dark Mode** - Full dark/light theme support
-- 📊 **Conversion Queue** - Handle multiple files simultaneously
-- 📥 **Download System** - Easy download of converted files
-- 🔧 **Open Source** - MIT licensed with comprehensive documentation
-
-### Technical Features
-- **Next.js 15** with App Router and React 19
-- **TypeScript** for type safety and better development
-- **Tailwind CSS** for modern, responsive styling
-- **Service Worker** for offline functionality
-- **Static Export** for serverless deployment
-- **GitHub Actions** for automated CI/CD
-
-### Documentation
-- 📚 **Comprehensive README** with setup and usage instructions
-- 🤝 **Contributing Guide** with development workflow
-- 🔒 **Privacy Policy** detailing data handling practices
-- 🚀 **Deployment Guide** for multiple hosting options
-- 📁 **Project Structure** documentation for contributors
-- 📋 **Task Tracking** with progress monitoring
-
-### Security & Privacy
-- ✅ **No Data Collection** - Zero tracking or analytics
-- ✅ **No External APIs** - Complete independence from third parties
-- ✅ **Client-Side Processing** - Files never leave user's device
-- ✅ **Offline Capable** - Works without internet connection
-- ✅ **Open Source** - Transparent and auditable code
-
-### Supported Formats
-#### Images
-- **Input**: JPG, PNG, GIF, WebP, BMP
-- **Output**: JPG, PNG, WebP, GIF
-
-### Browser Support
-- ✅ Chrome 90+
-- ✅ Firefox 88+
-- ✅ Safari 14+
-- ✅ Edge 90+
-
-### Deployment Options
-- ✅ GitHub Pages
-- ✅ Vercel
-- ✅ Netlify
-- ✅ Self-hosted static servers
+#### [0.1.1] - Previously Released (Removed)  
+- GitHub Actions workflow fixes
+- pnpm package manager integration
+- Build process improvements
+- CI/CD pipeline enhancements
 
 ---
 
-## Release Notes Format
+## Current Features (In Development)
 
-### Types of Changes
-- **Added** for new features
-- **Changed** for changes in existing functionality
-- **Deprecated** for soon-to-be removed features
-- **Removed** for now removed features
-- **Fixed** for any bug fixes
-- **Security** for vulnerability fixes
+### Images ✅ Available
+- **Input**: JPG, PNG, GIF, WebP, BMP, TIFF, SVG
+- **Output**: JPG, PNG, WebP, GIF, BMP
+- **Features**: Quality adjustment, format conversion, resize support
 
-### Emoji Guide
-- 🎉 Major releases and milestones
-- ✨ New features
-- 🔒 Security and privacy improvements
-- ⚡ Performance improvements
-- 🐛 Bug fixes
-- 📚 Documentation updates
-- 🔧 Technical improvements
-- 🎨 UI/UX improvements
-- 📱 Mobile and responsive updates
-- 🌙 Theme and accessibility updates
+### Documents ✅ Available
+- **Input**: TXT, CSV, JSON, HTML, CSS, JS, XML
+- **Output**: TXT, CSV, JSON, HTML, CSS, JS, XML
+- **Features**: CSV ↔ JSON conversion, Plain text to HTML, Format standardization
+
+### Audio 🚧 Planned
+- **Formats**: MP3, WAV, OGG, FLAC, AAC, M4A
+- **Status**: Requires specialized audio processing libraries
+
+### Video 🚧 Planned
+- **Formats**: MP4, WebM, OGV, AVI, MOV
+- **Status**: Requires specialized video processing libraries
+
+### Archives 🚧 Planned
+- **Formats**: ZIP, TAR, GZ, 7Z
+- **Status**: Requires compression/decompression libraries
 
 ---
 
-**Note**: This project follows semantic versioning. Version numbers are structured as MAJOR.MINOR.PATCH where:
-- **MAJOR**: Incompatible API changes
-- **MINOR**: New functionality in a backwards compatible manner
-- **PATCH**: Backwards compatible bug fixes
+## Technical Notes
+
+### Build System
+- **Framework**: Next.js 15+ with TypeScript
+- **Package Manager**: pnpm
+- **Styling**: Tailwind CSS
+- **Icons**: Lucide React
+- **Deployment**: Static export for GitHub Pages, Vercel, Netlify
+
+### Privacy & Security
+- **Client-Side Processing**: All conversions happen in the browser
+- **No Data Collection**: Files never leave the user's device
+- **Open Source**: MIT licensed, fully auditable code
+- **Offline Capable**: PWA functionality for offline use

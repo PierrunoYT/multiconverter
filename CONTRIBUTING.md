@@ -2,6 +2,8 @@
 
 Thank you for your interest in contributing to MultiConverter! We welcome contributions from everyone, whether you're fixing bugs, adding features, improving documentation, or helping with translations.
 
+> **Current Status (June 22, 2025)**: Following recent cleanup and build fixes, the project is in a stable state with clean documentation and working CI/CD pipelines. All previous releases have been removed to maintain a clean project history.
+
 MultiConverter supports multiple file formats including images, documents, and has planned support for audio, video, and archive formats. We're always looking for contributors to help expand format support and improve conversion quality.
 
 ## 🚀 Getting Started
@@ -23,13 +25,13 @@ MultiConverter supports multiple file formats including images, documents, and h
    ```bash
    git remote add upstream https://github.com/originalowner/multiconverter.git
    ```
-4. **Install dependencies**:
+4. **Install dependencies** (we use pnpm for this project):
    ```bash
-   npm install
+   pnpm install
    ```
 5. **Start the development server**:
    ```bash
-   npm run dev
+   pnpm dev
    ```
 
 ## 🛠️ Development Workflow

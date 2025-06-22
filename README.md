@@ -19,6 +19,7 @@ A free, open-source file conversion tool that runs entirely in your browser. Con
 ### Images ✅ Available Now
 - **Input**: JPG, PNG, GIF, WebP, BMP, TIFF, SVG
 - **Output**: JPG, PNG, WebP, GIF, BMP
+- **Features**: Quality adjustment, format conversion, resize support
 
 ### Documents ✅ Available Now
 - **Input**: TXT, CSV, JSON, HTML, CSS, JS, XML

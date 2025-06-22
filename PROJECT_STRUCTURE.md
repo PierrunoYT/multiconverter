@@ -2,13 +2,17 @@
 
 This document provides a comprehensive overview of the MultiConverter project structure, explaining the purpose and organization of all files and directories.
 
+> **Updated (June 22, 2025)**: Following recent cleanup and build fixes, the project structure reflects the current stable state with clean documentation and working CI/CD pipelines.
+
 ## 📁 Root Directory Structure
 
 ```
 multiconverter/
 ├── .github/                    # GitHub-specific configurations
 │   └── workflows/
-│       └── deploy.yml         # GitHub Actions CI/CD pipeline
+│       ├── deploy.yml         # GitHub Actions CI/CD pipeline
+│       └── release.yml        # Release automation workflow (currently unused)
+├── CHANGELOG.md               # Version history and release notes
 ├── app/                       # Next.js App Router directory
 │   ├── favicon.ico           # Website favicon
 │   ├── globals.css           # Global CSS styles
@@ -47,7 +51,14 @@ multiconverter/
 
 ### `.github/workflows/`
 Contains GitHub Actions workflows for automation:
-- **`deploy.yml`** - Automated testing, building, and deployment pipeline
+- **`deploy.yml`** - Automated testing, building, and deployment pipeline (uses pnpm)
+- **`release.yml`** - Release automation workflow (currently unused after cleanup)
+
+### `CHANGELOG.md`
+Version history and release documentation:
+- Documents all changes, fixes, and improvements
+- Follows semantic versioning principles
+- Updated after release cleanup to reflect current stable state
 
 ### `app/` (Next.js App Router)
 The main application directory using Next.js 15 App Router:

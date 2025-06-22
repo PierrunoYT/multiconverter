@@ -2,18 +2,20 @@
 
 This document explains how to deploy MultiConverter as a free, open-source, offline-capable application.
 
+> **Updated (June 22, 2025)**: Following recent cleanup and build fixes, the deployment process is now stable with working CI/CD pipelines using pnpm.
+
 ## 🚀 Quick Start
 
 ### Local Development
 ```bash
-npm install
-npm run dev
+pnpm install
+pnpm dev
 ```
 
 ### Production Build
 ```bash
-npm run build
-npm run start
+pnpm build
+pnpm start
 ```
 
 ## 📦 Deployment Options
@@ -27,17 +29,17 @@ MultiConverter is configured for static export and can be deployed to GitHub Pag
 
 ### 2. Vercel
 ```bash
-npm install -g vercel
+pnpm install -g vercel
 vercel --prod
 ```
 
 ### 3. Netlify
 1. Connect your GitHub repository to Netlify
-2. Build command: `npm run build`
+2. Build command: `pnpm build`
 3. Publish directory: `out`
 
 ### 4. Self-Hosted
-After running `npm run build`, serve the `out` directory with any static file server:
+After running `pnpm build`, serve the `out` directory with any static file server:
 
 ```bash
 # Using Python
@@ -48,6 +50,16 @@ npx serve out
 
 # Using nginx (copy out/ to your web root)
 ```
+
+## 🔧 CI/CD Pipeline
+
+The project includes a GitHub Actions workflow (`.github/workflows/deploy.yml`) that:
+- Uses pnpm for dependency management
+- Runs tests and builds the application
+- Deploys to GitHub Pages automatically on push to master branch
+- Includes proper caching for faster builds
+
+The workflow has been recently updated to fix all pnpm-related issues and ensure reliable deployments.
 
 ## 🔧 Configuration
 

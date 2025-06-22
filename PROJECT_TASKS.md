@@ -2,6 +2,8 @@
 
 This document tracks all tasks completed and planned for the MultiConverter open-source project.
 
+> **Status Update (June 22, 2025)**: Following release cleanup and build fixes, all documentation has been updated to reflect the current stable state. Previous releases v0.1.1 and v0.1.2 have been removed to maintain a clean project history.
+
 ## 📋 Task Categories
 
 ### 🏗️ Foundation & Setup
@@ -98,6 +100,8 @@ This document tracks all tasks completed and planned for the MultiConverter open
 | PR Templates | 📋 Planned | Medium | Pull request templates |
 | Code of Conduct | 📋 Planned | Medium | Community guidelines |
 | Changelog | ✅ Completed | Medium | Track version changes |
+| Release Cleanup | ✅ Completed | High | Removed problematic releases, clean git history |
+| Documentation Updates | ✅ Completed | High | Updated all .md files post-cleanup |
 | Release Process | ✅ Completed | Medium | Automated releases |
 | Contributor Recognition | 📋 Planned | Low | Acknowledge contributors |
 

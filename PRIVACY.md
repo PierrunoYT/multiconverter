@@ -1,10 +1,12 @@
 # Privacy Policy
 
-**Last updated: January 2025**
+**Last updated: June 2025**
 
 ## Our Commitment to Privacy
 
 MultiConverter is designed with privacy as a core principle. We believe your files and data should remain completely private and under your control.
+
+> **Current Status**: Following recent project cleanup and stability improvements, our privacy-first approach remains unchanged. All file processing continues to happen locally in your browser with no data collection or tracking.
 
 ## 🔒 How We Protect Your Privacy
 
