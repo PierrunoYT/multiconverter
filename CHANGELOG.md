@@ -15,6 +15,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Advanced accessibility features
 - Unit and integration tests
 
+## [0.1.1] - 2025-01-22
+
+### Fixed
+- 🔧 **GitHub Actions Workflows** - Fixed CI/CD pipelines to use pnpm instead of npm
+- 🚀 **Release Automation** - Corrected package manager configuration for automated releases
+- 📦 **Build Process** - Ensured reproducible builds with proper lockfile handling
+
+### Technical Improvements
+- Updated deploy.yml workflow with pnpm setup and caching
+- Fixed release.yml workflow for proper dependency management
+- Added pnpm/action-setup for consistent pnpm installation
+- Improved audit commands for pnpm compatibility
+- Enhanced workflow reliability and build performance
+
 ## [0.1.0] - 2025-01-22
 
 ### Added
