@@ -35,24 +35,17 @@ export default function Home() {
             Transform your files between multiple formats with our free, open-source, and offline-capable conversion tool.
             Everything runs in your browser - no uploads, no tracking, completely private.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
-            <button className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-4 rounded-lg text-lg font-semibold hover:from-blue-700 hover:to-purple-700 transition-all duration-200 flex items-center gap-2 shadow-lg">
+          
+          {/* Call to Action Buttons */}
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+            <a href="#converter" className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-4 rounded-lg text-lg font-semibold hover:from-blue-700 hover:to-purple-700 transition-all duration-200 flex items-center gap-2 shadow-lg">
               <Upload className="w-5 h-5" />
               Start Converting
               <ArrowRight className="w-5 h-5" />
-            </button>
-            <button className="border-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 px-8 py-4 rounded-lg text-lg font-semibold hover:bg-gray-50 dark:hover:bg-gray-800 transition-all duration-200">
-              View Demo
-            </button>
-          </div>
-          
-          {/* Upload Area */}
-          <div className="max-w-2xl mx-auto">
-            <div className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-xl p-12 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm hover:border-blue-400 dark:hover:border-blue-500 transition-colors cursor-pointer">
-              <Upload className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-              <p className="text-lg text-gray-600 dark:text-gray-300 mb-2">Drop your files here or click to browse</p>
-              <p className="text-sm text-gray-500 dark:text-gray-400">Free & unlimited • Works completely offline</p>
-            </div>
+            </a>
+            <a href="https://github.com/yourusername/multiconverter" target="_blank" rel="noopener noreferrer" className="border-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 px-8 py-4 rounded-lg text-lg font-semibold hover:bg-gray-50 dark:hover:bg-gray-800 transition-all duration-200">
+              View on GitHub
+            </a>
           </div>
         </div>
       </section>
