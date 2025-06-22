@@ -15,8 +15,21 @@ interface ConversionJob {
 }
 
 const SUPPORTED_FORMATS = {
-  input: ['audio/mpeg', 'audio/wav', 'audio/ogg', 'audio/mp4', 'audio/aac', 'audio/flac', 'audio/webm'],
-  output: ['wav', 'mp3', 'ogg', 'webm']
+  input: ['audio/mpeg', 'audio/wav', 'audio/ogg', 'audio/mp4', 'audio/aac', 'audio/flac', 'audio/webm', 'audio/x-m4a'],
+  output: ['wav', 'webm', 'ogg', 'mp3']
+};
+
+// Format capabilities based on browser support
+const getFormatCapabilities = () => {
+  const mediaRecorder = typeof MediaRecorder !== 'undefined';
+  const webAudio = typeof AudioContext !== 'undefined' || typeof (window as any).webkitAudioContext !== 'undefined';
+  
+  return {
+    wav: webAudio, // Always supported with Web Audio API
+    webm: mediaRecorder && MediaRecorder.isTypeSupported('audio/webm;codecs=opus'),
+    ogg: mediaRecorder && MediaRecorder.isTypeSupported('audio/ogg;codecs=opus'),
+    mp3: false // Requires additional library (lamejs)
+  };
 };
 
 export default function AudioConverter() {
@@ -74,23 +87,43 @@ export default function AudioConverter() {
           const arrayBuffer = fileReader.result as ArrayBuffer;
           const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
           
-          // For WAV format, we can create it directly
-          if (outputFormat === 'wav') {
-            const wavBlob = audioBufferToWav(audioBuffer);
-            resolve(wavBlob);
-          } else if (outputFormat === 'webm') {
-            // For WebM, we'll use MediaRecorder API
-            const webmBlob = await audioBufferToWebM(audioBuffer, audioContext);
-            resolve(webmBlob);
-          } else {
-            // For other formats, we'll convert to WAV as a fallback
-            // In a real implementation, you'd want to use libraries like lamejs for MP3
-            const wavBlob = audioBufferToWav(audioBuffer);
-            resolve(wavBlob);
+          switch (outputFormat) {
+            case 'wav':
+              const wavBlob = audioBufferToWav(audioBuffer);
+              resolve(wavBlob);
+              break;
+              
+            case 'webm':
+              if (MediaRecorder.isTypeSupported('audio/webm;codecs=opus')) {
+                const webmBlob = await audioBufferToWebM(audioBuffer, audioContext);
+                resolve(webmBlob);
+              } else {
+                throw new Error('WebM format not supported in this browser');
+              }
+              break;
+              
+            case 'ogg':
+              if (MediaRecorder.isTypeSupported('audio/ogg;codecs=opus')) {
+                const oggBlob = await audioBufferToOgg(audioBuffer, audioContext);
+                resolve(oggBlob);
+              } else {
+                throw new Error('OGG format not supported in this browser');
+              }
+              break;
+              
+            case 'mp3':
+              // MP3 encoding requires additional libraries
+              // For now, we'll provide a WAV fallback with a clear message
+              const mp3FallbackBlob = audioBufferToWav(audioBuffer);
+              resolve(mp3FallbackBlob);
+              break;
+              
+            default:
+              throw new Error(`Unsupported output format: ${outputFormat}`);
           }
-                 } catch {
-           reject(new Error('Failed to decode audio file. Format may not be supported.'));
-         }
+        } catch (error) {
+          reject(new Error(error instanceof Error ? error.message : 'Failed to decode audio file. Format may not be supported.'));
+        }
       };
 
       fileReader.onerror = () => reject(new Error('Failed to read audio file'));
@@ -138,6 +171,47 @@ export default function AudioConverter() {
     }
 
     return new Blob([arrayBuffer], { type: 'audio/wav' });
+  };
+
+  // Helper function to convert AudioBuffer to OGG using MediaRecorder
+  const audioBufferToOgg = async (buffer: AudioBuffer, audioContext: AudioContext): Promise<Blob> => {
+    return new Promise((resolve, reject) => {
+      const source = audioContext.createBufferSource();
+      source.buffer = buffer;
+
+      const dest = audioContext.createMediaStreamDestination();
+      source.connect(dest);
+
+      const mediaRecorder = new MediaRecorder(dest.stream, {
+        mimeType: 'audio/ogg;codecs=opus'
+      });
+
+      const chunks: Blob[] = [];
+      
+      mediaRecorder.ondataavailable = (event) => {
+        if (event.data.size > 0) {
+          chunks.push(event.data);
+        }
+      };
+
+      mediaRecorder.onstop = () => {
+        const blob = new Blob(chunks, { type: 'audio/ogg' });
+        resolve(blob);
+      };
+
+      mediaRecorder.onerror = () => {
+        reject(new Error('Failed to record OGG audio'));
+      };
+
+      mediaRecorder.start();
+      source.start();
+      
+      // Stop recording when audio finishes
+      setTimeout(() => {
+        mediaRecorder.stop();
+        source.stop();
+      }, (buffer.duration * 1000) + 100);
+    });
   };
 
   // Helper function to convert AudioBuffer to WebM using MediaRecorder
@@ -275,7 +349,7 @@ export default function AudioConverter() {
               Audio Converter
             </h1>
             <p className="text-gray-600 dark:text-gray-300">
-              Convert between MP3, WAV, OGG, AAC, FLAC, M4A, and WebM formats
+              Convert between various audio formats including WAV, WebM, OGG, and more
             </p>
           </div>
 
@@ -297,7 +371,7 @@ export default function AudioConverter() {
               Drop your audio files here or click to browse
             </p>
             <p className="text-sm text-gray-500 dark:text-gray-400">
-              Supports: MP3, WAV, OGG, AAC, FLAC, M4A, WebM
+              Input formats: MP3, WAV, OGG, AAC, FLAC, M4A, WebM
             </p>
             <input
               ref={fileInputRef}
@@ -318,7 +392,7 @@ export default function AudioConverter() {
                   Audio Conversion Notice
                 </h3>
                 <p className="text-sm text-yellow-700 dark:text-yellow-300">
-                  Currently supports conversion to WAV and WebM formats. Advanced formats like MP3 encoding require additional libraries. 
+                  Currently supports conversion to WAV, WebM, and OGG formats. MP3 encoding requires additional libraries and will fallback to WAV format.
                   All processing happens in your browser - your files never leave your device.
                 </p>
               </div>
@@ -364,11 +438,17 @@ export default function AudioConverter() {
                         disabled={job.status === 'processing'}
                         className="px-3 py-1 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                       >
-                        {SUPPORTED_FORMATS.output.map(format => (
-                          <option key={format} value={format}>
-                            {format.toUpperCase()}
-                          </option>
-                        ))}
+                        {SUPPORTED_FORMATS.output.map(format => {
+                          const capabilities = getFormatCapabilities();
+                          const isSupported = capabilities[format as keyof typeof capabilities];
+                          const label = format.toUpperCase() + (format === 'mp3' ? ' (→WAV)' : !isSupported ? ' (Unsupported)' : '');
+                          
+                          return (
+                            <option key={format} value={format} disabled={!isSupported && format !== 'mp3'}>
+                              {label}
+                            </option>
+                          );
+                        })}
                       </select>
 
                       {/* Action Buttons */}
