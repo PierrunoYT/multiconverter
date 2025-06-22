@@ -1,5 +1,5 @@
 import { ArrowRight, Upload, Download, Shield, Zap, FileText, Image, Music, Video, Archive, Code } from "lucide-react";
-import FileConverter from "@/components/FileConverter";
+import Link from "next/link";
 
 export default function Home() {
   return (
@@ -16,7 +16,7 @@ export default function Home() {
           <div className="hidden md:flex items-center space-x-6">
             <a href="#features" className="text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white transition-colors">Features</a>
             <a href="#formats" className="text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white transition-colors">Formats</a>
-            <a href="#converter" className="text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white transition-colors">Converter</a>
+            <Link href="/converter" className="text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white transition-colors">Converter</Link>
             <a href="https://github.com/PierrunoYT/multiconverter" target="_blank" rel="noopener noreferrer" className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-2 rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-200">
               GitHub
             </a>
@@ -38,11 +38,11 @@ export default function Home() {
           
           {/* Call to Action Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <a href="#converter" className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-4 rounded-lg text-lg font-semibold hover:from-blue-700 hover:to-purple-700 transition-all duration-200 flex items-center gap-2 shadow-lg">
+            <Link href="/converter" className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-4 rounded-lg text-lg font-semibold hover:from-blue-700 hover:to-purple-700 transition-all duration-200 flex items-center gap-2 shadow-lg">
               <Upload className="w-5 h-5" />
               Start Converting
               <ArrowRight className="w-5 h-5" />
-            </a>
+            </Link>
             <a href="https://github.com/PierrunoYT/multiconverter" target="_blank" rel="noopener noreferrer" className="border-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 px-8 py-4 rounded-lg text-lg font-semibold hover:bg-gray-50 dark:hover:bg-gray-800 transition-all duration-200">
               View on GitHub
             </a>
@@ -192,20 +192,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* File Converter Section */}
-      <section id="converter" className="py-20 bg-gradient-to-r from-blue-600 to-purple-600">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-8">
-            <h2 className="text-4xl font-bold text-white mb-4">Start Converting Your Files</h2>
-            <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
-              Free, open-source, and completely private. Your files never leave your browser.
-            </p>
-          </div>
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl">
-            <FileConverter />
-          </div>
-        </div>
-      </section>
 
       {/* Footer */}
       <footer className="bg-gray-900 text-white py-12">
@@ -227,7 +213,7 @@ export default function Home() {
               <h4 className="font-semibold mb-4">Project</h4>
               <ul className="space-y-2 text-gray-400">
                 <li><a href="#features" className="hover:text-white transition-colors">Features</a></li>
-                <li><a href="#converter" className="hover:text-white transition-colors">Converter</a></li>
+                <li><Link href="/converter" className="hover:text-white transition-colors">Converter</Link></li>
                 <li><a href="https://github.com/PierrunoYT/multiconverter" className="hover:text-white transition-colors">Source Code</a></li>
                 <li><a href="https://github.com/PierrunoYT/multiconverter/releases" className="hover:text-white transition-colors">Releases</a></li>
               </ul>
