@@ -15,7 +15,7 @@ multiconverter/
 │   ├── layout.tsx            # Root layout component with PWA setup
 │   └── page.tsx              # Home page component
 ├── components/               # Reusable React components
-│   └── FileConverter.tsx     # Main file conversion component
+│   └── FileConverter.tsx     # Multi-format file conversion component
 ├── lib/                      # Utility functions and libraries
 │   └── utils.ts              # Utility functions (Tailwind merge, etc.)
 ├── public/                   # Static assets served directly

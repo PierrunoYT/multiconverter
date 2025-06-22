@@ -42,9 +42,10 @@ This document tracks all tasks completed and planned for the MultiConverter open
 | Download Functionality | ✅ Completed | High | Download converted files |
 | Error Handling | ✅ Completed | Medium | Proper error messages and recovery |
 | Progress Indicators | ✅ Completed | Medium | Visual feedback during conversion |
-| Document Conversion | 📋 Planned | Medium | PDF, TXT, DOC support |
-| Audio Conversion | 📋 Planned | Low | MP3, WAV, FLAC support |
-| Video Conversion | 📋 Planned | Low | MP4, AVI, MOV support |
+| Document Conversion | ✅ Completed | Medium | TXT, CSV, JSON, HTML, CSS, JS, XML support |
+| Audio Conversion | 📋 Planned | Low | MP3, WAV, OGG support (requires specialized libraries) |
+| Video Conversion | 📋 Planned | Low | MP4, WebM, OGG support (requires specialized libraries) |
+| Archive Conversion | 📋 Planned | Low | ZIP, TAR, GZ support (requires specialized libraries) |
 | Batch Operations | 📋 Planned | Medium | Convert multiple files to same format |
 
 ### 🔒 Privacy & Security
@@ -96,22 +97,22 @@ This document tracks all tasks completed and planned for the MultiConverter open
 | Issue Templates | 📋 Planned | Medium | GitHub issue templates |
 | PR Templates | 📋 Planned | Medium | Pull request templates |
 | Code of Conduct | 📋 Planned | Medium | Community guidelines |
-| Changelog | 📋 Planned | Medium | Track version changes |
-| Release Process | 📋 Planned | Medium | Automated releases |
+| Changelog | ✅ Completed | Medium | Track version changes |
+| Release Process | ✅ Completed | Medium | Automated releases |
 | Contributor Recognition | 📋 Planned | Low | Acknowledge contributors |
 
 ## 📊 Progress Summary
 
-### Overall Progress: 68% Complete
+### Overall Progress: 75% Complete
 
-**Completed Tasks:** 26/39
-**In Progress:** 2/39
-**Planned:** 11/39
+**Completed Tasks:** 30/42
+**In Progress:** 2/42
+**Planned:** 10/42
 
 ### By Priority:
 - **Critical:** 3/3 ✅ (100%)
 - **High:** 16/19 ✅ (84%)
-- **Medium:** 7/14 ✅ (50%)
+- **Medium:** 11/17 ✅ (65%)
 - **Low:** 0/3 ✅ (0%)
 
 ## 🎯 Next Sprint Priorities
@@ -123,7 +124,7 @@ This document tracks all tasks completed and planned for the MultiConverter open
 4. **Browser Compatibility** - Test across major browsers
 
 ### Short Term (Next month)
-1. **Document Conversion** - Add PDF/TXT support
+1. **Audio/Video Conversion** - Add multimedia format support with specialized libraries
 2. **Accessibility Features** - Complete ARIA implementation
 3. **Integration Tests** - Test full user workflows
 4. **Issue Templates** - Set up GitHub templates
@@ -143,17 +144,18 @@ This document tracks all tasks completed and planned for the MultiConverter open
 - Privacy-first design
 - Clean, intuitive UI
 
-### v0.2.0 - Enhanced Features 🔄 In Progress
-- Document conversion
+### v0.2.0 - Enhanced Features ✅ Completed
+- Document conversion (TXT, CSV, JSON, HTML, CSS, JS, XML)
+- Multi-format support with category detection
+- Enhanced UI with format-specific icons
+- Automated release process
+
+### v0.3.0 - Advanced Features 🔄 In Progress
+- Audio/video conversion (requires specialized libraries)
+- Archive format support
 - Better testing coverage
 - Improved accessibility
 - Security hardening
-
-### v0.3.0 - Advanced Features 📋 Planned
-- Audio/video conversion
-- Batch operations
-- Advanced UI features
-- Performance optimizations
 
 ### v1.0.0 - Production Ready 📋 Planned
 - Full format support
@@ -180,5 +182,13 @@ This document tracks all tasks completed and planned for the MultiConverter open
 
 ---
 
-**Last Updated:** January 2025
+**Last Updated:** January 22, 2025
 **Next Review:** Weekly during active development
+
+### Recent Achievements (v0.1.2)
+- ✅ Expanded file format support beyond images
+- ✅ Added document conversion: TXT, CSV, JSON, HTML, CSS, JS, XML
+- ✅ Implemented bidirectional CSV ↔ JSON conversion
+- ✅ Added category-specific file icons and improved UX
+- ✅ Enhanced documentation with comprehensive format support
+- ✅ Fixed GitHub Actions workflows and automated releases

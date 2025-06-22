@@ -2,6 +2,8 @@
 
 Thank you for your interest in contributing to MultiConverter! We welcome contributions from everyone, whether you're fixing bugs, adding features, improving documentation, or helping with translations.
 
+MultiConverter supports multiple file formats including images, documents, and has planned support for audio, video, and archive formats. We're always looking for contributors to help expand format support and improve conversion quality.
+
 ## 🚀 Getting Started
 
 ### Prerequisites
