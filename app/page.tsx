@@ -17,7 +17,7 @@ export default function Home() {
             <a href="#features" className="text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white transition-colors">Features</a>
             <a href="#formats" className="text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white transition-colors">Formats</a>
             <a href="#converter" className="text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white transition-colors">Converter</a>
-            <a href="https://github.com/yourusername/multiconverter" target="_blank" rel="noopener noreferrer" className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-2 rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-200">
+            <a href="https://github.com/PierrunoYT/multiconverter" target="_blank" rel="noopener noreferrer" className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-2 rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-200">
               GitHub
             </a>
           </div>
@@ -43,7 +43,7 @@ export default function Home() {
               Start Converting
               <ArrowRight className="w-5 h-5" />
             </a>
-            <a href="https://github.com/yourusername/multiconverter" target="_blank" rel="noopener noreferrer" className="border-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 px-8 py-4 rounded-lg text-lg font-semibold hover:bg-gray-50 dark:hover:bg-gray-800 transition-all duration-200">
+            <a href="https://github.com/PierrunoYT/multiconverter" target="_blank" rel="noopener noreferrer" className="border-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 px-8 py-4 rounded-lg text-lg font-semibold hover:bg-gray-50 dark:hover:bg-gray-800 transition-all duration-200">
               View on GitHub
             </a>
           </div>
@@ -228,28 +228,28 @@ export default function Home() {
               <ul className="space-y-2 text-gray-400">
                 <li><a href="#features" className="hover:text-white transition-colors">Features</a></li>
                 <li><a href="#converter" className="hover:text-white transition-colors">Converter</a></li>
-                <li><a href="https://github.com/yourusername/multiconverter" className="hover:text-white transition-colors">Source Code</a></li>
-                <li><a href="https://github.com/yourusername/multiconverter/releases" className="hover:text-white transition-colors">Releases</a></li>
+                <li><a href="https://github.com/PierrunoYT/multiconverter" className="hover:text-white transition-colors">Source Code</a></li>
+                <li><a href="https://github.com/PierrunoYT/multiconverter/releases" className="hover:text-white transition-colors">Releases</a></li>
               </ul>
             </div>
             
             <div>
               <h4 className="font-semibold mb-4">Community</h4>
               <ul className="space-y-2 text-gray-400">
-                <li><a href="https://github.com/yourusername/multiconverter/wiki" className="hover:text-white transition-colors">Documentation</a></li>
-                <li><a href="https://github.com/yourusername/multiconverter/discussions" className="hover:text-white transition-colors">Discussions</a></li>
-                <li><a href="https://github.com/yourusername/multiconverter/issues" className="hover:text-white transition-colors">Issues</a></li>
-                <li><a href="https://github.com/yourusername/multiconverter/blob/main/CONTRIBUTING.md" className="hover:text-white transition-colors">Contributing</a></li>
+                <li><a href="https://github.com/PierrunoYT/multiconverter/wiki" className="hover:text-white transition-colors">Documentation</a></li>
+                <li><a href="https://github.com/PierrunoYT/multiconverter/discussions" className="hover:text-white transition-colors">Discussions</a></li>
+                <li><a href="https://github.com/PierrunoYT/multiconverter/issues" className="hover:text-white transition-colors">Issues</a></li>
+                <li><a href="https://github.com/PierrunoYT/multiconverter/blob/main/CONTRIBUTING.md" className="hover:text-white transition-colors">Contributing</a></li>
               </ul>
             </div>
             
             <div>
               <h4 className="font-semibold mb-4">Legal</h4>
               <ul className="space-y-2 text-gray-400">
-                <li><a href="https://github.com/yourusername/multiconverter/blob/main/README.md" className="hover:text-white transition-colors">About</a></li>
-                <li><a href="https://github.com/yourusername/multiconverter/blob/main/LICENSE" className="hover:text-white transition-colors">License</a></li>
-                <li><a href="https://github.com/yourusername/multiconverter/blob/main/PRIVACY.md" className="hover:text-white transition-colors">Privacy</a></li>
-                <li><a href="https://github.com/yourusername/multiconverter/security" className="hover:text-white transition-colors">Security</a></li>
+                <li><a href="https://github.com/PierrunoYT/multiconverter/blob/main/README.md" className="hover:text-white transition-colors">About</a></li>
+                <li><a href="https://github.com/PierrunoYT/multiconverter/blob/main/LICENSE" className="hover:text-white transition-colors">License</a></li>
+                <li><a href="https://github.com/PierrunoYT/multiconverter/blob/main/PRIVACY.md" className="hover:text-white transition-colors">Privacy</a></li>
+                <li><a href="https://github.com/PierrunoYT/multiconverter/security" className="hover:text-white transition-colors">Security</a></li>
               </ul>
             </div>
           </div>

@@ -3,13 +3,13 @@
   "version": "0.1.0",
   "description": "A free, open-source file conversion tool that runs entirely in your browser",
   "keywords": ["file-converter", "image-converter", "offline", "privacy", "open-source", "nextjs"],
-  "homepage": "https://github.com/yourusername/multiconverter",
+  "homepage": "https://github.com/PierrunoYT/multiconverter",
   "repository": {
     "type": "git",
-    "url": "https://github.com/yourusername/multiconverter.git"
+    "url": "https://github.com/PierrunoYT/multiconverter.git"
   },
   "bugs": {
-    "url": "https://github.com/yourusername/multiconverter/issues"
+    "url": "https://github.com/PierrunoYT/multiconverter/issues"
   },
   "license": "MIT",
   "author": {

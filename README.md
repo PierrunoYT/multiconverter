@@ -40,7 +40,7 @@ A free, open-source file conversion tool that runs entirely in your browser. Con
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/multiconverter.git
+git clone https://github.com/PierrunoYT/multiconverter.git
 cd multiconverter
 ```
 
@@ -93,6 +93,8 @@ We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) f
 6. Push to the branch: `git push origin feature/amazing-feature`
 7. Open a Pull Request
 
+**Repository**: https://github.com/PierrunoYT/multiconverter
+
 ### Adding New Formats
 
 To add support for new file formats:
@@ -118,7 +120,7 @@ MultiConverter is designed with privacy in mind:
 
 ## 🐛 Bug Reports
 
-Found a bug? Please [open an issue](https://github.com/yourusername/multiconverter/issues) with:
+Found a bug? Please [open an issue](https://github.com/PierrunoYT/multiconverter/issues) with:
 
 - Description of the bug
 - Steps to reproduce
@@ -128,7 +130,7 @@ Found a bug? Please [open an issue](https://github.com/yourusername/multiconvert
 
 ## 💡 Feature Requests
 
-Have an idea for a new feature? [Start a discussion](https://github.com/yourusername/multiconverter/discussions) or [open an issue](https://github.com/yourusername/multiconverter/issues).
+Have an idea for a new feature? [Start a discussion](https://github.com/PierrunoYT/multiconverter/discussions) or [open an issue](https://github.com/PierrunoYT/multiconverter/issues).
 
 ## 🙏 Acknowledgments
 
@@ -153,4 +155,4 @@ Have an idea for a new feature? [Start a discussion](https://github.com/youruser
 
 **Made with ❤️ by the open source community**
 
-[⭐ Star this project](https://github.com/yourusername/multiconverter) if you find it useful!
+[⭐ Star this project](https://github.com/PierrunoYT/multiconverter) if you find it useful!
