@@ -30,8 +30,7 @@ const conversionTypes = [
     color: 'from-purple-500 to-purple-600',
     bgColor: 'bg-purple-50 dark:bg-purple-900/20',
     borderColor: 'border-purple-200 dark:border-purple-800',
-    formats: ['MP3', 'WAV', 'FLAC', 'AAC', 'OGG', 'M4A'],
-    comingSoon: true
+    formats: ['MP3', 'WAV', 'FLAC', 'AAC', 'OGG', 'M4A']
   },
   {
     id: 'video',

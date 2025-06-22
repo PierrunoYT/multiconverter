@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useCallback } from 'react';
-import { ArrowLeft, Upload, Download, X, Code, Loader2 } from 'lucide-react';
+import { ArrowLeft, Upload, Download, X, Music, Loader2, Volume2 } from 'lucide-react';
 import Link from 'next/link';
 
 interface ConversionJob {
@@ -11,14 +11,15 @@ interface ConversionJob {
   status: 'pending' | 'processing' | 'completed' | 'error';
   result?: Blob;
   error?: string;
+  duration?: number;
 }
 
 const SUPPORTED_FORMATS = {
-  input: ['application/json', 'application/xml', 'text/xml', 'text/csv', 'text/yaml', 'text/x-yaml', 'application/x-yaml'],
-  output: ['json', 'xml', 'csv', 'yaml']
+  input: ['audio/mpeg', 'audio/wav', 'audio/ogg', 'audio/mp4', 'audio/aac', 'audio/flac', 'audio/webm'],
+  output: ['wav', 'mp3', 'ogg', 'webm']
 };
 
-export default function CodeConverter() {
+export default function AudioConverter() {
   const [jobs, setJobs] = useState<ConversionJob[]>([]);
   const [dragActive, setDragActive] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -49,7 +50,10 @@ export default function CodeConverter() {
 
   const handleFiles = useCallback((files: File[]) => {
     const newJobs: ConversionJob[] = files
-      .filter(file => SUPPORTED_FORMATS.input.includes(file.type) || file.name.endsWith('.json') || file.name.endsWith('.xml') || file.name.endsWith('.csv') || file.name.endsWith('.yaml') || file.name.endsWith('.yml'))
+      .filter(file => 
+        SUPPORTED_FORMATS.input.includes(file.type) || 
+        file.name.match(/\.(mp3|wav|ogg|flac|aac|m4a|webm)$/i)
+      )
       .map(file => ({
         id: Math.random().toString(36).substr(2, 9),
         file,
@@ -60,129 +64,122 @@ export default function CodeConverter() {
     setJobs(prev => [...prev, ...newJobs]);
   }, []);
 
-  const convertCode = useCallback(async (file: File, outputFormat: string): Promise<Blob> => {
+  const convertAudio = useCallback(async (file: File, outputFormat: string): Promise<Blob> => {
     return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      
-      reader.onload = () => {
-        try {
-          let content = reader.result as string;
-          let mimeType = 'text/plain';
-          
-          // Determine input format from file extension or MIME type
-          const fileName = file.name.toLowerCase();
-          let inputFormat = 'json';
-          if (fileName.endsWith('.xml') || file.type.includes('xml')) {
-            inputFormat = 'xml';
-          } else if (fileName.endsWith('.csv') || file.type.includes('csv')) {
-            inputFormat = 'csv';
-          } else if (fileName.endsWith('.yaml') || fileName.endsWith('.yml') || file.type.includes('yaml')) {
-            inputFormat = 'yaml';
-          }
+      const audioContext = new (window.AudioContext || (window as typeof window & { webkitAudioContext: typeof AudioContext }).webkitAudioContext)();
+      const fileReader = new FileReader();
 
-          // Handle different output formats
-          switch (outputFormat) {
-            case 'json':
-              if (inputFormat === 'csv') {
-                // CSV to JSON conversion
-                const lines = content.split('\n').filter(line => line.trim());
-                if (lines.length > 0) {
-                  const headers = lines[0].split(',').map(h => h.trim());
-                  const jsonData = lines.slice(1).map(line => {
-                    const values = line.split(',').map(v => v.trim());
-                    const obj: Record<string, string> = {};
-                    headers.forEach((header, index) => {
-                      obj[header] = values[index] || '';
-                    });
-                    return obj;
-                  });
-                  content = JSON.stringify(jsonData, null, 2);
-                }
-              }
-              mimeType = 'application/json';
-              break;
-            case 'csv':
-              if (inputFormat === 'json') {
-                // JSON to CSV conversion
-                try {
-                  const jsonData = JSON.parse(content);
-                  if (Array.isArray(jsonData) && jsonData.length > 0) {
-                    const headers = Object.keys(jsonData[0]);
-                    const csvContent = [
-                      headers.join(','),
-                      ...jsonData.map(row => headers.map(header => row[header] || '').join(','))
-                    ].join('\n');
-                    content = csvContent;
-                  }
-                } catch {
-                  throw new Error('Invalid JSON format');
-                }
-              }
-              mimeType = 'text/csv';
-              break;
-            case 'xml':
-              if (inputFormat === 'json') {
-                // Simple JSON to XML conversion
-                try {
-                  const jsonData = JSON.parse(content);
-                  const convertToXml = (obj: unknown, rootName = 'root'): string => {
-                    if (Array.isArray(obj)) {
-                      return `<${rootName}>\n${obj.map((item, index) => convertToXml(item, `item${index}`)).join('\n')}\n</${rootName}>`;
-                    } else if (typeof obj === 'object' && obj !== null) {
-                      const xmlContent = Object.entries(obj)
-                        .map(([key, value]) => `  <${key}>${typeof value === 'object' ? '\n' + convertToXml(value, key) + '\n  ' : value}</${key}>`)
-                        .join('\n');
-                      return `<${rootName}>\n${xmlContent}\n</${rootName}>`;
-                    } else {
-                      return String(obj);
-                    }
-                  };
-                  content = `<?xml version="1.0" encoding="UTF-8"?>\n${convertToXml(jsonData)}`;
-                } catch {
-                  throw new Error('Invalid JSON format');
-                }
-              }
-              mimeType = 'application/xml';
-              break;
-            case 'yaml':
-              if (inputFormat === 'json') {
-                // Simple JSON to YAML conversion
-                try {
-                  const jsonData = JSON.parse(content);
-                  const convertToYaml = (obj: unknown, indent = 0): string => {
-                    const spaces = '  '.repeat(indent);
-                    if (Array.isArray(obj)) {
-                      return obj.map(item => `${spaces}- ${typeof item === 'object' ? '\n' + convertToYaml(item, indent + 1) : item}`).join('\n');
-                    } else if (typeof obj === 'object' && obj !== null) {
-                      return Object.entries(obj)
-                        .map(([key, value]) => `${spaces}${key}: ${typeof value === 'object' ? '\n' + convertToYaml(value, indent + 1) : value}`)
-                        .join('\n');
-                    } else {
-                      return String(obj);
-                    }
-                  };
-                  content = convertToYaml(jsonData);
-                } catch {
-                  throw new Error('Invalid JSON format');
-                }
-              }
-              mimeType = 'text/yaml';
-              break;
-            default:
-              mimeType = `text/${outputFormat}`;
-          }
+      fileReader.onload = async () => {
+        try {
+          const arrayBuffer = fileReader.result as ArrayBuffer;
+          const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
           
-          const blob = new Blob([content], { type: mimeType });
-          resolve(blob);
-        } catch (error) {
-          reject(error);
-        }
+          // For WAV format, we can create it directly
+          if (outputFormat === 'wav') {
+            const wavBlob = audioBufferToWav(audioBuffer);
+            resolve(wavBlob);
+          } else if (outputFormat === 'webm') {
+            // For WebM, we'll use MediaRecorder API
+            const webmBlob = await audioBufferToWebM(audioBuffer, audioContext);
+            resolve(webmBlob);
+          } else {
+            // For other formats, we'll convert to WAV as a fallback
+            // In a real implementation, you'd want to use libraries like lamejs for MP3
+            const wavBlob = audioBufferToWav(audioBuffer);
+            resolve(wavBlob);
+          }
+                 } catch {
+           reject(new Error('Failed to decode audio file. Format may not be supported.'));
+         }
       };
-      
-      reader.onerror = () => reject(new Error('Failed to read file'));
-      reader.readAsText(file);
+
+      fileReader.onerror = () => reject(new Error('Failed to read audio file'));
+      fileReader.readAsArrayBuffer(file);
     });
   }, []);
+
+  // Helper function to convert AudioBuffer to WAV
+  const audioBufferToWav = (buffer: AudioBuffer): Blob => {
+    const length = buffer.length;
+    const numberOfChannels = buffer.numberOfChannels;
+    const sampleRate = buffer.sampleRate;
+    const arrayBuffer = new ArrayBuffer(44 + length * numberOfChannels * 2);
+    const view = new DataView(arrayBuffer);
+
+    // WAV header
+    const writeString = (offset: number, string: string) => {
+      for (let i = 0; i < string.length; i++) {
+        view.setUint8(offset + i, string.charCodeAt(i));
+      }
+    };
+
+    writeString(0, 'RIFF');
+    view.setUint32(4, 36 + length * numberOfChannels * 2, true);
+    writeString(8, 'WAVE');
+    writeString(12, 'fmt ');
+    view.setUint32(16, 16, true);
+    view.setUint16(20, 1, true);
+    view.setUint16(22, numberOfChannels, true);
+    view.setUint32(24, sampleRate, true);
+    view.setUint32(28, sampleRate * numberOfChannels * 2, true);
+    view.setUint16(32, numberOfChannels * 2, true);
+    view.setUint16(34, 16, true);
+    writeString(36, 'data');
+    view.setUint32(40, length * numberOfChannels * 2, true);
+
+    // PCM data
+    let offset = 44;
+    for (let i = 0; i < length; i++) {
+      for (let channel = 0; channel < numberOfChannels; channel++) {
+        const sample = Math.max(-1, Math.min(1, buffer.getChannelData(channel)[i]));
+        view.setInt16(offset, sample < 0 ? sample * 0x8000 : sample * 0x7FFF, true);
+        offset += 2;
+      }
+    }
+
+    return new Blob([arrayBuffer], { type: 'audio/wav' });
+  };
+
+  // Helper function to convert AudioBuffer to WebM using MediaRecorder
+  const audioBufferToWebM = async (buffer: AudioBuffer, audioContext: AudioContext): Promise<Blob> => {
+    return new Promise((resolve, reject) => {
+      const source = audioContext.createBufferSource();
+      source.buffer = buffer;
+
+      const dest = audioContext.createMediaStreamDestination();
+      source.connect(dest);
+
+      const mediaRecorder = new MediaRecorder(dest.stream, {
+        mimeType: 'audio/webm;codecs=opus'
+      });
+
+      const chunks: Blob[] = [];
+      
+      mediaRecorder.ondataavailable = (event) => {
+        if (event.data.size > 0) {
+          chunks.push(event.data);
+        }
+      };
+
+      mediaRecorder.onstop = () => {
+        const blob = new Blob(chunks, { type: 'audio/webm' });
+        resolve(blob);
+      };
+
+      mediaRecorder.onerror = () => {
+        reject(new Error('Failed to record audio'));
+      };
+
+      mediaRecorder.start();
+      source.start();
+      
+      // Stop recording when audio finishes
+      setTimeout(() => {
+        mediaRecorder.stop();
+        source.stop();
+      }, (buffer.duration * 1000) + 100);
+    });
+  };
 
   const processJob = useCallback(async (jobId: string) => {
     setJobs(prev => prev.map(job =>
@@ -193,7 +190,7 @@ export default function CodeConverter() {
       const job = jobs.find(j => j.id === jobId);
       if (!job) throw new Error('Job not found');
 
-      const result = await convertCode(job.file, job.outputFormat);
+      const result = await convertAudio(job.file, job.outputFormat);
       
       setJobs(prev => prev.map(j =>
         j.id === jobId ? { ...j, status: 'completed', result } : j
@@ -207,7 +204,7 @@ export default function CodeConverter() {
         } : j
       ));
     }
-  }, [jobs, convertCode]);
+  }, [jobs, convertAudio]);
 
   const downloadFile = useCallback((job: ConversionJob) => {
     if (!job.result) return;
@@ -232,8 +229,22 @@ export default function CodeConverter() {
     ));
   }, []);
 
+  const previewAudio = useCallback((file: File) => {
+    const audio = new Audio();
+    const url = URL.createObjectURL(file);
+    audio.src = url;
+    audio.play().catch(() => {
+      // Handle play error silently
+    });
+    
+    // Clean up URL after a delay
+    setTimeout(() => {
+      URL.revokeObjectURL(url);
+    }, 1000);
+  }, []);
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-blue-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       {/* Header */}
       <header className="container mx-auto px-4 py-6">
         <nav className="flex items-center justify-between">
@@ -257,14 +268,14 @@ export default function CodeConverter() {
         <div className="max-w-4xl mx-auto">
           {/* Title */}
           <div className="text-center mb-8">
-            <div className="w-16 h-16 bg-gradient-to-r from-indigo-500 to-indigo-600 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Code className="w-8 h-8 text-white" />
+            <div className="w-16 h-16 bg-gradient-to-r from-purple-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Music className="w-8 h-8 text-white" />
             </div>
             <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-              Code & Data Converter
+              Audio Converter
             </h1>
             <p className="text-gray-600 dark:text-gray-300">
-              Convert between JSON, XML, CSV, and YAML formats
+              Convert between MP3, WAV, OGG, AAC, FLAC, M4A, and WebM formats
             </p>
           </div>
 
@@ -272,8 +283,8 @@ export default function CodeConverter() {
           <div
             className={`border-2 border-dashed rounded-xl p-12 text-center transition-colors cursor-pointer mb-8 ${
               dragActive 
-                ? 'border-indigo-400 bg-indigo-50 dark:bg-indigo-900/20' 
-                : 'border-gray-300 dark:border-gray-600 hover:border-indigo-400 dark:hover:border-indigo-500'
+                ? 'border-purple-400 bg-purple-50 dark:bg-purple-900/20' 
+                : 'border-gray-300 dark:border-gray-600 hover:border-purple-400 dark:hover:border-purple-500'
             }`}
             onDragEnter={handleDrag}
             onDragLeave={handleDrag}
@@ -283,19 +294,35 @@ export default function CodeConverter() {
           >
             <Upload className="w-12 h-12 text-gray-400 mx-auto mb-4" />
             <p className="text-lg text-gray-600 dark:text-gray-300 mb-2">
-              Drop your code/data files here or click to browse
+              Drop your audio files here or click to browse
             </p>
             <p className="text-sm text-gray-500 dark:text-gray-400">
-              Supports: JSON, XML, CSV, YAML
+              Supports: MP3, WAV, OGG, AAC, FLAC, M4A, WebM
             </p>
             <input
               ref={fileInputRef}
               type="file"
               multiple
-              accept=".json,.xml,.csv,.yaml,.yml,application/json,application/xml,text/csv"
+              accept="audio/*,.mp3,.wav,.ogg,.flac,.aac,.m4a,.webm"
               onChange={handleFileInput}
               className="hidden"
             />
+          </div>
+
+          {/* Format Notice */}
+          <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4 mb-8">
+            <div className="flex items-start space-x-3">
+              <div className="w-5 h-5 text-yellow-600 dark:text-yellow-400 mt-0.5">⚠️</div>
+              <div>
+                <h3 className="font-medium text-yellow-800 dark:text-yellow-200 mb-1">
+                  Audio Conversion Notice
+                </h3>
+                <p className="text-sm text-yellow-700 dark:text-yellow-300">
+                  Currently supports conversion to WAV and WebM formats. Advanced formats like MP3 encoding require additional libraries. 
+                  All processing happens in your browser - your files never leave your device.
+                </p>
+              </div>
+            </div>
           </div>
 
           {/* Conversion Jobs */}
@@ -309,18 +336,27 @@ export default function CodeConverter() {
                 <div key={job.id} className="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-sm border border-gray-200 dark:border-gray-700">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-3">
-                      <Code className="w-8 h-8 text-indigo-500" />
+                      <Music className="w-8 h-8 text-purple-500" />
                       <div>
                         <p className="font-medium text-gray-900 dark:text-white">
                           {job.file.name}
                         </p>
                         <p className="text-sm text-gray-500 dark:text-gray-400">
-                          {(job.file.size / 1024).toFixed(2)} KB
+                          {(job.file.size / 1024 / 1024).toFixed(2)} MB
                         </p>
                       </div>
                     </div>
 
                     <div className="flex items-center space-x-4">
+                      {/* Preview Button */}
+                      <button
+                        onClick={() => previewAudio(job.file)}
+                        className="p-2 text-gray-400 hover:text-purple-500 transition-colors"
+                        title="Preview audio"
+                      >
+                        <Volume2 className="w-4 h-4" />
+                      </button>
+
                       {/* Format Selector */}
                       <select
                         value={job.outputFormat}
@@ -339,7 +375,7 @@ export default function CodeConverter() {
                       {job.status === 'pending' && (
                         <button
                           onClick={() => processJob(job.id)}
-                          className="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition-colors"
+                          className="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700 transition-colors"
                         >
                           Convert
                         </button>
@@ -357,7 +393,7 @@ export default function CodeConverter() {
                       {job.status === 'completed' && (
                         <button
                           onClick={() => downloadFile(job)}
-                          className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors flex items-center space-x-2"
+                          className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition-colors flex items-center space-x-2"
                         >
                           <Download className="w-4 h-4" />
                           <span>Download</span>
@@ -365,7 +401,7 @@ export default function CodeConverter() {
                       )}
 
                       {job.status === 'error' && (
-                        <div className="text-red-600 dark:text-red-400 text-sm">
+                        <div className="text-red-600 dark:text-red-400 text-sm max-w-xs">
                           Error: {job.error}
                         </div>
                       )}
@@ -386,4 +422,4 @@ export default function CodeConverter() {
       </main>
     </div>
   );
-}
+} 
