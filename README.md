@@ -10,8 +10,9 @@ A free, open-source file conversion tool that runs entirely in your browser. Con
 - **⚡ Lightning Fast**: Instant conversions with optimized processing
 - **🆓 Completely Free**: No limitations, no subscriptions, no hidden costs
 - **📱 Works Offline**: Once loaded, works without internet connection
-- **🎨 Modern UI**: Clean, responsive design with dark mode support
+- **🎨 Clean Interface**: Intuitive drag & drop with streamlined user experience
 - **🔧 Open Source**: MIT licensed, contribute and customize freely
+- **🌙 Dark Mode**: Full dark/light theme support
 
 ## 🚀 Supported Formats
 
@@ -138,13 +139,15 @@ Have an idea for a new feature? [Start a discussion](https://github.com/youruser
 
 ## 📊 Project Status
 
-- ✅ Basic UI and landing page
-- ✅ Image format conversion (JPG, PNG, WebP)
+- ✅ Clean, modern UI with streamlined interface
+- ✅ Image format conversion (JPG, PNG, WebP, GIF)
+- ✅ Drag & drop file upload interface
+- ✅ Conversion queue with progress tracking
+- ✅ PWA support with offline functionality
 - 🚧 Document conversion (in progress)
 - 📋 Audio conversion (planned)
 - 📋 Video conversion (planned)
-- 📋 Batch conversion (planned)
-- 📋 Drag & drop interface (planned)
+- 📋 Batch conversion presets (planned)
 
 ---
 

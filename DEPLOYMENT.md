@@ -86,6 +86,7 @@ Target scores:
 - Accessibility: 95+
 - Best Practices: 95+
 - SEO: 95+
+- PWA: 95+
 
 ## 🔒 Security
 
