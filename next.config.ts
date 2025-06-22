@@ -7,10 +7,7 @@ const nextConfig: NextConfig = {
     unoptimized: true
   },
   // Enable static generation for all pages
-  experimental: {
-    // Disable server-side features for static export
-    serverComponentsExternalPackages: []
-  }
+  serverExternalPackages: []
 };
 
 export default nextConfig;

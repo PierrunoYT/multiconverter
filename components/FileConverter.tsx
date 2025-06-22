@@ -58,12 +58,12 @@ export default function FileConverter() {
     
     const files = Array.from(e.dataTransfer.files);
     handleFiles(files);
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleFileInput = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
     handleFiles(files);
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const getFileCategory = useCallback((file: File): string | null => {
     for (const [category, formats] of Object.entries(SUPPORTED_FORMATS)) {
@@ -143,7 +143,7 @@ export default function FileConverter() {
                 const headers = lines[0].split(',');
                 const jsonData = lines.slice(1).map(line => {
                   const values = line.split(',');
-                  const obj: any = {};
+                  const obj: Record<string, string> = {};
                   headers.forEach((header, index) => {
                     obj[header.trim()] = values[index]?.trim() || '';
                   });
@@ -166,7 +166,7 @@ export default function FileConverter() {
                     ].join('\n');
                     content = csvContent;
                   }
-                } catch (e) {
+                } catch {
                   throw new Error('Invalid JSON format');
                 }
               }
