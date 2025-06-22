@@ -1,0 +1,138 @@
+name: Create Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  create-release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Build application
+      run: npm run build
+      
+    - name: Create release archive
+      run: |
+        cd out
+        zip -r ../multiconverter-${{ github.ref_name }}.zip .
+        cd ..
+        tar -czf multiconverter-${{ github.ref_name }}.tar.gz -C out .
+        
+    - name: Generate changelog
+      id: changelog
+      run: |
+        # Get the tag name
+        TAG_NAME=${GITHUB_REF#refs/tags/}
+        
+        # Create changelog content
+        cat > CHANGELOG.md << 'EOF'
+        # MultiConverter $TAG_NAME
+        
+        ## 🎉 What's New
+        
+        ### ✨ Features
+        - Complete open source file conversion tool
+        - Privacy-first design with client-side processing
+        - Offline functionality with PWA support
+        - Image conversion (JPG, PNG, WebP, GIF)
+        - Drag & drop interface with conversion queue
+        - Clean, modern UI with dark mode support
+        
+        ### 🔒 Privacy & Security
+        - All file processing happens in your browser
+        - No data collection or external dependencies
+        - Complete user privacy and data control
+        - Works completely offline after first visit
+        
+        ### 🚀 Technical Highlights
+        - Built with Next.js 15 and React 19
+        - TypeScript for type safety
+        - Tailwind CSS for styling
+        - Service Worker for offline functionality
+        - Static export for serverless deployment
+        
+        ### 📚 Documentation
+        - Comprehensive README and setup guide
+        - Contributing guidelines for developers
+        - Privacy policy and deployment instructions
+        - Complete project structure documentation
+        
+        ## 🛠️ Installation
+        
+        ### Quick Start
+        ```bash
+        git clone https://github.com/yourusername/multiconverter.git
+        cd multiconverter
+        npm install
+        npm run dev
+        ```
+        
+        ### Deploy Your Own
+        - Download the release archive
+        - Extract and serve the files with any static server
+        - Or deploy to GitHub Pages, Vercel, Netlify
+        
+        ## 🎯 Supported Formats
+        
+        ### Images
+        - **Input**: JPG, PNG, GIF, WebP, BMP
+        - **Output**: JPG, PNG, WebP, GIF
+        
+        ### Coming Soon
+        - Document conversion (PDF, TXT, DOC)
+        - Audio conversion (MP3, WAV, FLAC)
+        - Video conversion (MP4, AVI, MOV)
+        
+        ## 🤝 Contributing
+        
+        We welcome contributions! See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+        
+        ## 📄 License
+        
+        MIT License - see [LICENSE](LICENSE) for details.
+        
+        ---
+        
+        **Full Changelog**: https://github.com/yourusername/multiconverter/commits/$TAG_NAME
+        EOF
+        
+        echo "changelog_file=CHANGELOG.md" >> $GITHUB_OUTPUT
+        
+    - name: Create GitHub Release
+      uses: softprops/action-gh-release@v1
+      with:
+        body_path: CHANGELOG.md
+        files: |
+          multiconverter-${{ github.ref_name }}.zip
+          multiconverter-${{ github.ref_name }}.tar.gz
+        draft: false
+        prerelease: false
+        generate_release_notes: true
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        
+    - name: Update package.json version
+      if: startsWith(github.ref, 'refs/tags/v')
+      run: |
+        VERSION=${GITHUB_REF#refs/tags/v}
+        npm version $VERSION --no-git-tag-version
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add package.json
+        git commit -m "chore: bump version to $VERSION" || exit 0
