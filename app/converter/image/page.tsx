@@ -1,142 +1,20 @@
 'use client';
 
-import { useState, useRef, useCallback } from 'react';
-import { ArrowLeft, Upload, Download, X, FileImage, Loader2 } from 'lucide-react';
+import { ArrowLeft, FileImage } from 'lucide-react';
 import Link from 'next/link';
-
-interface ConversionJob {
-  id: string;
-  file: File;
-  outputFormat: string;
-  status: 'pending' | 'processing' | 'completed' | 'error';
-  result?: Blob;
-  error?: string;
-}
-
-const SUPPORTED_FORMATS = {
-  input: ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/bmp', 'image/tiff', 'image/svg+xml'],
-  output: ['jpeg', 'png', 'webp', 'gif', 'bmp']
-};
+import { useImageJobs } from '../../../lib/image/hooks';
+import UploadArea from '../../../components/image/UploadArea';
+import JobItem from '../../../components/image/JobItem';
 
 export default function ImageConverter() {
-  const [jobs, setJobs] = useState<ConversionJob[]>([]);
-  const [dragActive, setDragActive] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
-
-  const handleDrag = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (e.type === 'dragenter' || e.type === 'dragover') {
-      setDragActive(true);
-    } else if (e.type === 'dragleave') {
-      setDragActive(false);
-    }
-  }, []);
-
-  const handleDrop = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setDragActive(false);
-    
-    const files = Array.from(e.dataTransfer.files);
-    handleFiles(files);
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
-  const handleFileInput = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(e.target.files || []);
-    handleFiles(files);
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
-  const handleFiles = useCallback((files: File[]) => {
-    const newJobs: ConversionJob[] = files
-      .filter(file => SUPPORTED_FORMATS.input.includes(file.type))
-      .map(file => ({
-        id: Math.random().toString(36).substr(2, 9),
-        file,
-        outputFormat: SUPPORTED_FORMATS.output[0],
-        status: 'pending' as const
-      }));
-
-    setJobs(prev => [...prev, ...newJobs]);
-  }, []);
-
-  const convertImage = useCallback(async (file: File, outputFormat: string): Promise<Blob> => {
-    return new Promise((resolve, reject) => {
-      const canvas = document.createElement('canvas');
-      const ctx = canvas.getContext('2d');
-      const img = new Image();
-
-      img.onload = () => {
-        canvas.width = img.width;
-        canvas.height = img.height;
-        
-        if (ctx) {
-          ctx.drawImage(img, 0, 0);
-          
-          canvas.toBlob((blob) => {
-            if (blob) {
-              resolve(blob);
-            } else {
-              reject(new Error('Failed to convert image'));
-            }
-          }, `image/${outputFormat}`, 0.9);
-        } else {
-          reject(new Error('Failed to get canvas context'));
-        }
-      };
-
-      img.onerror = () => reject(new Error('Failed to load image'));
-      img.src = URL.createObjectURL(file);
-    });
-  }, []);
-
-  const processJob = useCallback(async (jobId: string) => {
-    setJobs(prev => prev.map(job =>
-      job.id === jobId ? { ...job, status: 'processing' } : job
-    ));
-
-    try {
-      const job = jobs.find(j => j.id === jobId);
-      if (!job) throw new Error('Job not found');
-
-      const result = await convertImage(job.file, job.outputFormat);
-      
-      setJobs(prev => prev.map(j =>
-        j.id === jobId ? { ...j, status: 'completed', result } : j
-      ));
-    } catch (error) {
-      setJobs(prev => prev.map(j =>
-        j.id === jobId ? {
-          ...j,
-          status: 'error',
-          error: error instanceof Error ? error.message : 'Unknown error'
-        } : j
-      ));
-    }
-  }, [jobs, convertImage]);
-
-  const downloadFile = useCallback((job: ConversionJob) => {
-    if (!job.result) return;
-
-    const url = URL.createObjectURL(job.result);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `${job.file.name.split('.')[0]}.${job.outputFormat}`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-  }, []);
-
-  const removeJob = useCallback((jobId: string) => {
-    setJobs(prev => prev.filter(job => job.id !== jobId));
-  }, []);
-
-  const updateJobFormat = useCallback((jobId: string, format: string) => {
-    setJobs(prev => prev.map(job =>
-      job.id === jobId ? { ...job, outputFormat: format, status: 'pending' } : job
-    ));
-  }, []);
+  const {
+    jobs,
+    handleFiles,
+    processJob,
+    removeJob,
+    updateJobFormat,
+    downloadJobFile
+  } = useImageJobs();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
@@ -163,46 +41,19 @@ export default function ImageConverter() {
         <div className="max-w-4xl mx-auto">
           {/* Title */}
           <div className="text-center mb-8">
-            <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
+            <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4">
               <FileImage className="w-8 h-8 text-white" />
             </div>
             <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
               Image Converter
             </h1>
             <p className="text-gray-600 dark:text-gray-300">
-              Convert between JPG, PNG, WebP, GIF, BMP, TIFF, and SVG formats
+              Convert between JPEG, PNG, WebP, GIF, BMP, and other image formats
             </p>
           </div>
 
           {/* Upload Area */}
-          <div
-            className={`border-2 border-dashed rounded-xl p-12 text-center transition-colors cursor-pointer mb-8 ${
-              dragActive 
-                ? 'border-blue-400 bg-blue-50 dark:bg-blue-900/20' 
-                : 'border-gray-300 dark:border-gray-600 hover:border-blue-400 dark:hover:border-blue-500'
-            }`}
-            onDragEnter={handleDrag}
-            onDragLeave={handleDrag}
-            onDragOver={handleDrag}
-            onDrop={handleDrop}
-            onClick={() => fileInputRef.current?.click()}
-          >
-            <Upload className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-            <p className="text-lg text-gray-600 dark:text-gray-300 mb-2">
-              Drop your image files here or click to browse
-            </p>
-            <p className="text-sm text-gray-500 dark:text-gray-400">
-              Supports: JPG, PNG, GIF, WebP, BMP, TIFF, SVG
-            </p>
-            <input
-              ref={fileInputRef}
-              type="file"
-              multiple
-              accept={SUPPORTED_FORMATS.input.join(',')}
-              onChange={handleFileInput}
-              className="hidden"
-            />
-          </div>
+          <UploadArea onFilesSelected={handleFiles} />
 
           {/* Conversion Jobs */}
           {jobs.length > 0 && (
@@ -212,82 +63,44 @@ export default function ImageConverter() {
               </h3>
               
               {jobs.map((job) => (
-                <div key={job.id} className="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-sm border border-gray-200 dark:border-gray-700">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-3">
-                      <FileImage className="w-8 h-8 text-blue-500" />
-                      <div>
-                        <p className="font-medium text-gray-900 dark:text-white">
-                          {job.file.name}
-                        </p>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">
-                          {(job.file.size / 1024 / 1024).toFixed(2)} MB
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center space-x-4">
-                      {/* Format Selector */}
-                      <select
-                        value={job.outputFormat}
-                        onChange={(e) => updateJobFormat(job.id, e.target.value)}
-                        disabled={job.status === 'processing'}
-                        className="px-3 py-1 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                      >
-                        {SUPPORTED_FORMATS.output.map(format => (
-                          <option key={format} value={format}>
-                            {format.toUpperCase()}
-                          </option>
-                        ))}
-                      </select>
-
-                      {/* Action Buttons */}
-                      {job.status === 'pending' && (
-                        <button
-                          onClick={() => processJob(job.id)}
-                          className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
-                        >
-                          Convert
-                        </button>
-                      )}
-
-                      {job.status === 'processing' && (
-                        <div className="flex items-center space-x-2">
-                          <Loader2 className="w-4 h-4 animate-spin" />
-                          <span className="text-sm text-gray-600 dark:text-gray-400">
-                            Converting...
-                          </span>
-                        </div>
-                      )}
-
-                      {job.status === 'completed' && (
-                        <button
-                          onClick={() => downloadFile(job)}
-                          className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition-colors flex items-center space-x-2"
-                        >
-                          <Download className="w-4 h-4" />
-                          <span>Download</span>
-                        </button>
-                      )}
-
-                      {job.status === 'error' && (
-                        <div className="text-red-600 dark:text-red-400 text-sm">
-                          Error: {job.error}
-                        </div>
-                      )}
-
-                      <button
-                        onClick={() => removeJob(job.id)}
-                        className="p-2 text-gray-400 hover:text-red-500 transition-colors"
-                      >
-                        <X className="w-4 h-4" />
-                      </button>
-                    </div>
-                  </div>
-                </div>
+                <JobItem
+                  key={job.id}
+                  job={job}
+                  onProcess={processJob}
+                  onRemove={removeJob}
+                  onUpdateFormat={updateJobFormat}
+                  onDownload={downloadJobFile}
+                />
               ))}
             </div>
           )}
+
+          {/* Information Panel */}
+          <div className="mt-8 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-lg p-6 border border-blue-200 dark:border-blue-800">
+            <h3 className="font-semibold text-blue-900 dark:text-blue-200 mb-3">
+              🖼️ Image Conversion Features
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-blue-800 dark:text-blue-300">
+              <div>
+                <h4 className="font-medium mb-2">Supported Formats:</h4>
+                <ul className="space-y-1 text-xs">
+                  <li>• <strong>JPEG:</strong> Compressed format for photos</li>
+                  <li>• <strong>PNG:</strong> Lossless with transparency support</li>
+                  <li>• <strong>WebP:</strong> Modern web-optimized format</li>
+                  <li>• <strong>GIF:</strong> Animated and static images</li>
+                </ul>
+              </div>
+              <div>
+                <h4 className="font-medium mb-2">Features:</h4>
+                <ul className="space-y-1 text-xs">
+                  <li>• High-quality conversion</li>
+                  <li>• Batch processing support</li>
+                  <li>• Preserves image dimensions</li>
+                  <li>• Client-side processing</li>
+                </ul>
+              </div>
+            </div>
+          </div>
         </div>
       </main>
     </div>

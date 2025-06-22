@@ -1,236 +1,20 @@
 'use client';
 
-import { useState, useRef, useCallback } from 'react';
-import { ArrowLeft, Upload, Download, X, Code, Loader2 } from 'lucide-react';
+import { ArrowLeft, Code } from 'lucide-react';
 import Link from 'next/link';
-
-interface ConversionJob {
-  id: string;
-  file: File;
-  outputFormat: string;
-  status: 'pending' | 'processing' | 'completed' | 'error';
-  result?: Blob;
-  error?: string;
-}
-
-const SUPPORTED_FORMATS = {
-  input: ['application/json', 'application/xml', 'text/xml', 'text/csv', 'text/yaml', 'text/x-yaml', 'application/x-yaml'],
-  output: ['json', 'xml', 'csv', 'yaml']
-};
+import { useCodeJobs } from '../../../lib/code/hooks';
+import UploadArea from '../../../components/code/UploadArea';
+import JobItem from '../../../components/code/JobItem';
 
 export default function CodeConverter() {
-  const [jobs, setJobs] = useState<ConversionJob[]>([]);
-  const [dragActive, setDragActive] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
-
-  const handleDrag = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (e.type === 'dragenter' || e.type === 'dragover') {
-      setDragActive(true);
-    } else if (e.type === 'dragleave') {
-      setDragActive(false);
-    }
-  }, []);
-
-  const handleDrop = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setDragActive(false);
-    
-    const files = Array.from(e.dataTransfer.files);
-    handleFiles(files);
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
-  const handleFileInput = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(e.target.files || []);
-    handleFiles(files);
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
-  const handleFiles = useCallback((files: File[]) => {
-    const newJobs: ConversionJob[] = files
-      .filter(file => SUPPORTED_FORMATS.input.includes(file.type) || file.name.endsWith('.json') || file.name.endsWith('.xml') || file.name.endsWith('.csv') || file.name.endsWith('.yaml') || file.name.endsWith('.yml'))
-      .map(file => ({
-        id: Math.random().toString(36).substr(2, 9),
-        file,
-        outputFormat: SUPPORTED_FORMATS.output[0],
-        status: 'pending' as const
-      }));
-
-    setJobs(prev => [...prev, ...newJobs]);
-  }, []);
-
-  const convertCode = useCallback(async (file: File, outputFormat: string): Promise<Blob> => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      
-      reader.onload = () => {
-        try {
-          let content = reader.result as string;
-          let mimeType = 'text/plain';
-          
-          // Determine input format from file extension or MIME type
-          const fileName = file.name.toLowerCase();
-          let inputFormat = 'json';
-          if (fileName.endsWith('.xml') || file.type.includes('xml')) {
-            inputFormat = 'xml';
-          } else if (fileName.endsWith('.csv') || file.type.includes('csv')) {
-            inputFormat = 'csv';
-          } else if (fileName.endsWith('.yaml') || fileName.endsWith('.yml') || file.type.includes('yaml')) {
-            inputFormat = 'yaml';
-          }
-
-          // Handle different output formats
-          switch (outputFormat) {
-            case 'json':
-              if (inputFormat === 'csv') {
-                // CSV to JSON conversion
-                const lines = content.split('\n').filter(line => line.trim());
-                if (lines.length > 0) {
-                  const headers = lines[0].split(',').map(h => h.trim());
-                  const jsonData = lines.slice(1).map(line => {
-                    const values = line.split(',').map(v => v.trim());
-                    const obj: Record<string, string> = {};
-                    headers.forEach((header, index) => {
-                      obj[header] = values[index] || '';
-                    });
-                    return obj;
-                  });
-                  content = JSON.stringify(jsonData, null, 2);
-                }
-              }
-              mimeType = 'application/json';
-              break;
-            case 'csv':
-              if (inputFormat === 'json') {
-                // JSON to CSV conversion
-                try {
-                  const jsonData = JSON.parse(content);
-                  if (Array.isArray(jsonData) && jsonData.length > 0) {
-                    const headers = Object.keys(jsonData[0]);
-                    const csvContent = [
-                      headers.join(','),
-                      ...jsonData.map(row => headers.map(header => row[header] || '').join(','))
-                    ].join('\n');
-                    content = csvContent;
-                  }
-                } catch {
-                  throw new Error('Invalid JSON format');
-                }
-              }
-              mimeType = 'text/csv';
-              break;
-            case 'xml':
-              if (inputFormat === 'json') {
-                // Simple JSON to XML conversion
-                try {
-                  const jsonData = JSON.parse(content);
-                  const convertToXml = (obj: unknown, rootName = 'root'): string => {
-                    if (Array.isArray(obj)) {
-                      return `<${rootName}>\n${obj.map((item, index) => convertToXml(item, `item${index}`)).join('\n')}\n</${rootName}>`;
-                    } else if (typeof obj === 'object' && obj !== null) {
-                      const xmlContent = Object.entries(obj)
-                        .map(([key, value]) => `  <${key}>${typeof value === 'object' ? '\n' + convertToXml(value, key) + '\n  ' : value}</${key}>`)
-                        .join('\n');
-                      return `<${rootName}>\n${xmlContent}\n</${rootName}>`;
-                    } else {
-                      return String(obj);
-                    }
-                  };
-                  content = `<?xml version="1.0" encoding="UTF-8"?>\n${convertToXml(jsonData)}`;
-                } catch {
-                  throw new Error('Invalid JSON format');
-                }
-              }
-              mimeType = 'application/xml';
-              break;
-            case 'yaml':
-              if (inputFormat === 'json') {
-                // Simple JSON to YAML conversion
-                try {
-                  const jsonData = JSON.parse(content);
-                  const convertToYaml = (obj: unknown, indent = 0): string => {
-                    const spaces = '  '.repeat(indent);
-                    if (Array.isArray(obj)) {
-                      return obj.map(item => `${spaces}- ${typeof item === 'object' ? '\n' + convertToYaml(item, indent + 1) : item}`).join('\n');
-                    } else if (typeof obj === 'object' && obj !== null) {
-                      return Object.entries(obj)
-                        .map(([key, value]) => `${spaces}${key}: ${typeof value === 'object' ? '\n' + convertToYaml(value, indent + 1) : value}`)
-                        .join('\n');
-                    } else {
-                      return String(obj);
-                    }
-                  };
-                  content = convertToYaml(jsonData);
-                } catch {
-                  throw new Error('Invalid JSON format');
-                }
-              }
-              mimeType = 'text/yaml';
-              break;
-            default:
-              mimeType = `text/${outputFormat}`;
-          }
-          
-          const blob = new Blob([content], { type: mimeType });
-          resolve(blob);
-        } catch (error) {
-          reject(error);
-        }
-      };
-      
-      reader.onerror = () => reject(new Error('Failed to read file'));
-      reader.readAsText(file);
-    });
-  }, []);
-
-  const processJob = useCallback(async (jobId: string) => {
-    setJobs(prev => prev.map(job =>
-      job.id === jobId ? { ...job, status: 'processing' } : job
-    ));
-
-    try {
-      const job = jobs.find(j => j.id === jobId);
-      if (!job) throw new Error('Job not found');
-
-      const result = await convertCode(job.file, job.outputFormat);
-      
-      setJobs(prev => prev.map(j =>
-        j.id === jobId ? { ...j, status: 'completed', result } : j
-      ));
-    } catch (error) {
-      setJobs(prev => prev.map(j =>
-        j.id === jobId ? {
-          ...j,
-          status: 'error',
-          error: error instanceof Error ? error.message : 'Unknown error'
-        } : j
-      ));
-    }
-  }, [jobs, convertCode]);
-
-  const downloadFile = useCallback((job: ConversionJob) => {
-    if (!job.result) return;
-
-    const url = URL.createObjectURL(job.result);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `${job.file.name.split('.')[0]}.${job.outputFormat}`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-  }, []);
-
-  const removeJob = useCallback((jobId: string) => {
-    setJobs(prev => prev.filter(job => job.id !== jobId));
-  }, []);
-
-  const updateJobFormat = useCallback((jobId: string, format: string) => {
-    setJobs(prev => prev.map(job =>
-      job.id === jobId ? { ...job, outputFormat: format, status: 'pending' } : job
-    ));
-  }, []);
+  const {
+    jobs,
+    handleFiles,
+    processJob,
+    removeJob,
+    updateJobFormat,
+    downloadJobFile
+  } = useCodeJobs();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
@@ -257,46 +41,19 @@ export default function CodeConverter() {
         <div className="max-w-4xl mx-auto">
           {/* Title */}
           <div className="text-center mb-8">
-            <div className="w-16 h-16 bg-gradient-to-r from-indigo-500 to-indigo-600 rounded-full flex items-center justify-center mx-auto mb-4">
+            <div className="w-16 h-16 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4">
               <Code className="w-8 h-8 text-white" />
             </div>
             <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
               Code & Data Converter
             </h1>
             <p className="text-gray-600 dark:text-gray-300">
-              Convert between JSON, XML, CSV, and YAML formats
+              Convert between JSON, XML, CSV, and YAML formats with ease
             </p>
           </div>
 
           {/* Upload Area */}
-          <div
-            className={`border-2 border-dashed rounded-xl p-12 text-center transition-colors cursor-pointer mb-8 ${
-              dragActive 
-                ? 'border-indigo-400 bg-indigo-50 dark:bg-indigo-900/20' 
-                : 'border-gray-300 dark:border-gray-600 hover:border-indigo-400 dark:hover:border-indigo-500'
-            }`}
-            onDragEnter={handleDrag}
-            onDragLeave={handleDrag}
-            onDragOver={handleDrag}
-            onDrop={handleDrop}
-            onClick={() => fileInputRef.current?.click()}
-          >
-            <Upload className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-            <p className="text-lg text-gray-600 dark:text-gray-300 mb-2">
-              Drop your code/data files here or click to browse
-            </p>
-            <p className="text-sm text-gray-500 dark:text-gray-400">
-              Supports: JSON, XML, CSV, YAML
-            </p>
-            <input
-              ref={fileInputRef}
-              type="file"
-              multiple
-              accept=".json,.xml,.csv,.yaml,.yml,application/json,application/xml,text/csv"
-              onChange={handleFileInput}
-              className="hidden"
-            />
-          </div>
+          <UploadArea onFilesSelected={handleFiles} />
 
           {/* Conversion Jobs */}
           {jobs.length > 0 && (
@@ -306,82 +63,44 @@ export default function CodeConverter() {
               </h3>
               
               {jobs.map((job) => (
-                <div key={job.id} className="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-sm border border-gray-200 dark:border-gray-700">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-3">
-                      <Code className="w-8 h-8 text-indigo-500" />
-                      <div>
-                        <p className="font-medium text-gray-900 dark:text-white">
-                          {job.file.name}
-                        </p>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">
-                          {(job.file.size / 1024).toFixed(2)} KB
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center space-x-4">
-                      {/* Format Selector */}
-                      <select
-                        value={job.outputFormat}
-                        onChange={(e) => updateJobFormat(job.id, e.target.value)}
-                        disabled={job.status === 'processing'}
-                        className="px-3 py-1 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                      >
-                        {SUPPORTED_FORMATS.output.map(format => (
-                          <option key={format} value={format}>
-                            {format.toUpperCase()}
-                          </option>
-                        ))}
-                      </select>
-
-                      {/* Action Buttons */}
-                      {job.status === 'pending' && (
-                        <button
-                          onClick={() => processJob(job.id)}
-                          className="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition-colors"
-                        >
-                          Convert
-                        </button>
-                      )}
-
-                      {job.status === 'processing' && (
-                        <div className="flex items-center space-x-2">
-                          <Loader2 className="w-4 h-4 animate-spin" />
-                          <span className="text-sm text-gray-600 dark:text-gray-400">
-                            Converting...
-                          </span>
-                        </div>
-                      )}
-
-                      {job.status === 'completed' && (
-                        <button
-                          onClick={() => downloadFile(job)}
-                          className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors flex items-center space-x-2"
-                        >
-                          <Download className="w-4 h-4" />
-                          <span>Download</span>
-                        </button>
-                      )}
-
-                      {job.status === 'error' && (
-                        <div className="text-red-600 dark:text-red-400 text-sm">
-                          Error: {job.error}
-                        </div>
-                      )}
-
-                      <button
-                        onClick={() => removeJob(job.id)}
-                        className="p-2 text-gray-400 hover:text-red-500 transition-colors"
-                      >
-                        <X className="w-4 h-4" />
-                      </button>
-                    </div>
-                  </div>
-                </div>
+                <JobItem
+                  key={job.id}
+                  job={job}
+                  onProcess={processJob}
+                  onRemove={removeJob}
+                  onUpdateFormat={updateJobFormat}
+                  onDownload={downloadJobFile}
+                />
               ))}
             </div>
           )}
+
+          {/* Information Panel */}
+          <div className="mt-8 bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20 rounded-lg p-6 border border-indigo-200 dark:border-indigo-800">
+            <h3 className="font-semibold text-indigo-900 dark:text-indigo-200 mb-3">
+              💻 Code & Data Conversion Features
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-indigo-800 dark:text-indigo-300">
+              <div>
+                <h4 className="font-medium mb-2">Supported Formats:</h4>
+                <ul className="space-y-1 text-xs">
+                  <li>• <strong>JSON:</strong> JavaScript Object Notation</li>
+                  <li>• <strong>XML:</strong> Extensible Markup Language</li>
+                  <li>• <strong>CSV:</strong> Comma-Separated Values</li>
+                  <li>• <strong>YAML:</strong> YAML Ain't Markup Language</li>
+                </ul>
+              </div>
+              <div>
+                <h4 className="font-medium mb-2">Features:</h4>
+                <ul className="space-y-1 text-xs">
+                  <li>• Automatic format detection</li>
+                  <li>• Structure preservation</li>
+                  <li>• Error handling and validation</li>
+                  <li>• Client-side processing</li>
+                </ul>
+              </div>
+            </div>
+          </div>
         </div>
       </main>
     </div>
