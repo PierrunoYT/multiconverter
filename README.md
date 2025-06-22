@@ -16,19 +16,26 @@ A free, open-source file conversion tool that runs entirely in your browser. Con
 
 ## 🚀 Supported Formats
 
-### Images
-- **Input**: JPG, PNG, GIF, WebP, SVG, BMP, TIFF, ICO
-- **Output**: JPG, PNG, WebP, GIF
+### Images ✅ Available Now
+- **Input**: JPG, PNG, GIF, WebP, BMP, TIFF, SVG
+- **Output**: JPG, PNG, WebP, GIF, BMP
 
-### Documents
-- **Input**: PDF, DOC, DOCX, TXT, RTF, ODT
-- **Output**: PDF, TXT, Markdown
+### Documents ✅ Available Now
+- **Input**: TXT, CSV, JSON, HTML, CSS, JS, XML
+- **Output**: TXT, CSV, JSON, HTML, CSS, JS, XML
+- **Features**: CSV ↔ JSON conversion, Plain text to HTML, Format standardization
 
-### Audio (Coming Soon)
-- MP3, WAV, FLAC, AAC, OGG, M4A
+### Audio 🚧 Coming Soon
+- **Planned**: MP3, WAV, OGG, FLAC, AAC, M4A
+- **Note**: Requires specialized audio processing libraries
 
-### Video (Coming Soon)
-- MP4, AVI, MOV, MKV, WebM
+### Video 🚧 Coming Soon
+- **Planned**: MP4, WebM, OGG, AVI, MOV
+- **Note**: Requires specialized video processing libraries
+
+### Archives 🚧 Coming Soon
+- **Planned**: ZIP, TAR, GZ
+- **Note**: Requires compression/decompression libraries
 
 ## 🛠️ Getting Started
 

@@ -8,12 +8,34 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Planned
-- Document conversion (PDF, TXT, DOC)
-- Audio conversion (MP3, WAV, FLAC)
-- Video conversion (MP4, AVI, MOV)
+- Audio conversion (MP3, WAV, OGG, FLAC, AAC, M4A)
+- Video conversion (MP4, WebM, OGG, AVI, MOV)
+- Archive handling (ZIP, TAR, GZ)
 - Batch conversion presets
 - Advanced accessibility features
 - Unit and integration tests
+
+## [0.1.2] - 2025-01-22
+
+### Added
+- 🚀 **Multi-Format Support** - Expanded beyond images to support multiple file categories
+- 📄 **Document Conversion** - Added support for TXT, CSV, JSON, HTML, CSS, JS, XML formats
+- 🔄 **Smart Format Detection** - Automatic file category detection and format suggestions
+- 🎨 **Enhanced UI** - Category-specific icons and improved file type display
+- 🔧 **CSV ↔ JSON Conversion** - Bidirectional conversion between CSV and JSON formats
+- 📝 **Text to HTML** - Convert plain text files to formatted HTML documents
+
+### Improved
+- **File Processing** - Modular conversion system supporting multiple file types
+- **User Experience** - Clear format categorization and conversion status
+- **Error Handling** - Better error messages for unsupported conversions
+- **Documentation** - Updated README with comprehensive format support details
+
+### Technical
+- Refactored FileConverter component with category-based processing
+- Added specialized conversion functions for different file types
+- Implemented dynamic format selection based on file category
+- Enhanced file type detection and validation
 
 ## [0.1.1] - 2025-01-22
 
