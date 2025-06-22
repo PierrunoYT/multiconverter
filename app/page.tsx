@@ -1,4 +1,5 @@
 import { ArrowRight, Upload, Download, Shield, Zap, FileText, Image, Music, Video, Archive, Code } from "lucide-react";
+import FileConverter from "@/components/FileConverter";
 
 export default function Home() {
   return (
@@ -15,10 +16,10 @@ export default function Home() {
           <div className="hidden md:flex items-center space-x-6">
             <a href="#features" className="text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white transition-colors">Features</a>
             <a href="#formats" className="text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white transition-colors">Formats</a>
-            <a href="#pricing" className="text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white transition-colors">Pricing</a>
-            <button className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-2 rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-200">
-              Get Started
-            </button>
+            <a href="#converter" className="text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white transition-colors">Converter</a>
+            <a href="https://github.com/yourusername/multiconverter" target="_blank" rel="noopener noreferrer" className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-2 rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-200">
+              GitHub
+            </a>
           </div>
         </nav>
       </header>
@@ -31,8 +32,8 @@ export default function Home() {
             <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent"> Instantly</span>
           </h1>
           <p className="text-xl text-gray-600 dark:text-gray-300 mb-8 max-w-2xl mx-auto">
-            Transform your files between hundreds of formats with our powerful, secure, and lightning-fast conversion tool. 
-            No software installation required.
+            Transform your files between multiple formats with our free, open-source, and offline-capable conversion tool.
+            Everything runs in your browser - no uploads, no tracking, completely private.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
             <button className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-4 rounded-lg text-lg font-semibold hover:from-blue-700 hover:to-purple-700 transition-all duration-200 flex items-center gap-2 shadow-lg">
@@ -50,7 +51,7 @@ export default function Home() {
             <div className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-xl p-12 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm hover:border-blue-400 dark:hover:border-blue-500 transition-colors cursor-pointer">
               <Upload className="w-12 h-12 text-gray-400 mx-auto mb-4" />
               <p className="text-lg text-gray-600 dark:text-gray-300 mb-2">Drop your files here or click to browse</p>
-              <p className="text-sm text-gray-500 dark:text-gray-400">Supports 200+ file formats • Max 100MB per file</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400">Free & unlimited • Works completely offline</p>
             </div>
           </div>
         </div>
@@ -81,9 +82,9 @@ export default function Home() {
               <div className="w-16 h-16 bg-gradient-to-r from-green-500 to-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Shield className="w-8 h-8 text-white" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-3">100% Secure</h3>
+              <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-3">100% Private</h3>
               <p className="text-gray-600 dark:text-gray-300">
-                Your files are processed securely and deleted automatically. We never store your data.
+                All processing happens in your browser. Your files never leave your device - complete privacy guaranteed.
               </p>
             </div>
             
@@ -91,9 +92,9 @@ export default function Home() {
               <div className="w-16 h-16 bg-gradient-to-r from-purple-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Download className="w-8 h-8 text-white" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-3">No Installation</h3>
+              <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-3">Open Source & Free</h3>
               <p className="text-gray-600 dark:text-gray-300">
-                Works directly in your browser. No software downloads or installations required.
+                Completely free and open source. Works offline in your browser with no limitations.
               </p>
             </div>
           </div>
@@ -104,9 +105,9 @@ export default function Home() {
       <section id="formats" className="py-20">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">200+ Supported Formats</h2>
+            <h2 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">Multiple Supported Formats</h2>
             <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-              Convert between any file format you need. From images to documents, audio to video.
+              Convert between popular file formats. From images to documents, with more formats being added regularly.
             </p>
           </div>
           
@@ -198,16 +199,18 @@ export default function Home() {
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-20 bg-gradient-to-r from-blue-600 to-purple-600">
-        <div className="container mx-auto px-4 text-center">
-          <h2 className="text-4xl font-bold text-white mb-4">Ready to Convert Your Files?</h2>
-          <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
-            Join thousands of users who trust MultiConverter for their file conversion needs.
-          </p>
-          <button className="bg-white text-blue-600 px-8 py-4 rounded-lg text-lg font-semibold hover:bg-gray-100 transition-all duration-200 shadow-lg">
-            Start Converting Now
-          </button>
+      {/* File Converter Section */}
+      <section id="converter" className="py-20 bg-gradient-to-r from-blue-600 to-purple-600">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-8">
+            <h2 className="text-4xl font-bold text-white mb-4">Start Converting Your Files</h2>
+            <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
+              Free, open-source, and completely private. Your files never leave your browser.
+            </p>
+          </div>
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl">
+            <FileConverter />
+          </div>
         </div>
       </section>
 
@@ -228,38 +231,38 @@ export default function Home() {
             </div>
             
             <div>
-              <h4 className="font-semibold mb-4">Product</h4>
+              <h4 className="font-semibold mb-4">Project</h4>
               <ul className="space-y-2 text-gray-400">
-                <li><a href="#" className="hover:text-white transition-colors">Features</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Pricing</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">API</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Desktop App</a></li>
+                <li><a href="#features" className="hover:text-white transition-colors">Features</a></li>
+                <li><a href="#converter" className="hover:text-white transition-colors">Converter</a></li>
+                <li><a href="https://github.com/yourusername/multiconverter" className="hover:text-white transition-colors">Source Code</a></li>
+                <li><a href="https://github.com/yourusername/multiconverter/releases" className="hover:text-white transition-colors">Releases</a></li>
               </ul>
             </div>
             
             <div>
-              <h4 className="font-semibold mb-4">Support</h4>
+              <h4 className="font-semibold mb-4">Community</h4>
               <ul className="space-y-2 text-gray-400">
-                <li><a href="#" className="hover:text-white transition-colors">Help Center</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Contact Us</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Status</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Bug Reports</a></li>
+                <li><a href="https://github.com/yourusername/multiconverter/wiki" className="hover:text-white transition-colors">Documentation</a></li>
+                <li><a href="https://github.com/yourusername/multiconverter/discussions" className="hover:text-white transition-colors">Discussions</a></li>
+                <li><a href="https://github.com/yourusername/multiconverter/issues" className="hover:text-white transition-colors">Issues</a></li>
+                <li><a href="https://github.com/yourusername/multiconverter/blob/main/CONTRIBUTING.md" className="hover:text-white transition-colors">Contributing</a></li>
               </ul>
             </div>
             
             <div>
-              <h4 className="font-semibold mb-4">Company</h4>
+              <h4 className="font-semibold mb-4">Legal</h4>
               <ul className="space-y-2 text-gray-400">
-                <li><a href="#" className="hover:text-white transition-colors">About</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Blog</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Privacy</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Terms</a></li>
+                <li><a href="https://github.com/yourusername/multiconverter/blob/main/README.md" className="hover:text-white transition-colors">About</a></li>
+                <li><a href="https://github.com/yourusername/multiconverter/blob/main/LICENSE" className="hover:text-white transition-colors">License</a></li>
+                <li><a href="https://github.com/yourusername/multiconverter/blob/main/PRIVACY.md" className="hover:text-white transition-colors">Privacy</a></li>
+                <li><a href="https://github.com/yourusername/multiconverter/security" className="hover:text-white transition-colors">Security</a></li>
               </ul>
             </div>
           </div>
           
           <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
-            <p>&copy; 2025 MultiConverter. All rights reserved.</p>
+            <p>&copy; 2025 MultiConverter. Open source under MIT License.</p>
           </div>
         </div>
       </footer>

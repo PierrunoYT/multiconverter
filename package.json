@@ -1,12 +1,27 @@
 {
   "name": "multiconverter",
   "version": "0.1.0",
-  "private": true,
+  "description": "A free, open-source file conversion tool that runs entirely in your browser",
+  "keywords": ["file-converter", "image-converter", "offline", "privacy", "open-source", "nextjs"],
+  "homepage": "https://github.com/yourusername/multiconverter",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/multiconverter.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yourusername/multiconverter/issues"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "MultiConverter Contributors",
+    "url": "https://github.com/yourusername/multiconverter/graphs/contributors"
+  },
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "type-check": "tsc --noEmit"
   },
   "dependencies": {
     "class-variance-authority": "^0.7.1",
