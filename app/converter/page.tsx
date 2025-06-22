@@ -106,20 +106,20 @@ export default function ConverterPage() {
             const isClickable = !type.comingSoon;
             
             return (
-              <div key={type.id} className="relative">
+              <div key={type.id} className="relative h-full">
                 {isClickable ? (
-                  <Link href={`/converter/${type.id}`}>
-                    <div className={`${type.bgColor} ${type.borderColor} border-2 rounded-xl p-6 hover:shadow-lg transition-all duration-200 cursor-pointer transform hover:scale-105`}>
+                  <Link href={`/converter/${type.id}`} className="block h-full">
+                    <div className={`${type.bgColor} ${type.borderColor} border-2 rounded-xl p-6 hover:shadow-lg transition-all duration-200 cursor-pointer transform hover:scale-105 h-full flex flex-col`}>
                       <div className={`w-16 h-16 bg-gradient-to-r ${type.color} rounded-full flex items-center justify-center mx-auto mb-4`}>
                         <IconComponent className="w-8 h-8 text-white" />
                       </div>
                       <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2 text-center">
                         {type.title}
                       </h3>
-                      <p className="text-gray-600 dark:text-gray-300 text-center mb-4">
+                      <p className="text-gray-600 dark:text-gray-300 text-center mb-4 flex-grow">
                         {type.description}
                       </p>
-                      <div className="flex flex-wrap gap-1 justify-center">
+                      <div className="flex flex-wrap gap-1 justify-center mt-auto">
                         {type.formats.slice(0, 4).map((format) => (
                           <span key={format} className={`bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 px-2 py-1 rounded text-xs border ${type.borderColor}`}>
                             {format}
@@ -134,17 +134,17 @@ export default function ConverterPage() {
                     </div>
                   </Link>
                 ) : (
-                  <div className={`${type.bgColor} ${type.borderColor} border-2 rounded-xl p-6 opacity-60 cursor-not-allowed relative`}>
+                  <div className={`${type.bgColor} ${type.borderColor} border-2 rounded-xl p-6 opacity-60 cursor-not-allowed relative h-full flex flex-col`}>
                     <div className={`w-16 h-16 bg-gradient-to-r ${type.color} rounded-full flex items-center justify-center mx-auto mb-4`}>
                       <IconComponent className="w-8 h-8 text-white" />
                     </div>
                     <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2 text-center">
                       {type.title}
                     </h3>
-                    <p className="text-gray-600 dark:text-gray-300 text-center mb-4">
+                    <p className="text-gray-600 dark:text-gray-300 text-center mb-4 flex-grow">
                       {type.description}
                     </p>
-                    <div className="flex flex-wrap gap-1 justify-center">
+                    <div className="flex flex-wrap gap-1 justify-center mt-auto">
                       {type.formats.slice(0, 4).map((format) => (
                         <span key={format} className={`bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 px-2 py-1 rounded text-xs border ${type.borderColor}`}>
                           {format}
